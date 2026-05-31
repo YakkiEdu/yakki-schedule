@@ -4,7 +4,7 @@ import { useStore } from '../store/useStore';
 import { generateSchedule } from '../api';
 
 export function GenerateSchedule() {
-  const { classes, teachers, subjects, weekGrid, setSchedule, setActiveTab } = useStore();
+  const { classes, teachers, subjects, rooms, bellSchedule, weekGrid, setSchedule, setActiveTab } = useStore();
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -21,6 +21,8 @@ export function GenerateSchedule() {
         classes,
         teachers,
         subjects,
+        rooms,
+        bellSchedule,
         weekGrid,
       };
 
@@ -66,7 +68,7 @@ export function GenerateSchedule() {
         </div>
 
         {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
           <div className="card" style={{ textAlign: 'center' }}>
             <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--primary)' }}>
               {classes.length}
@@ -84,6 +86,12 @@ export function GenerateSchedule() {
               {subjects.length}
             </div>
             <div style={{ color: 'var(--text-secondary)' }}>{he.nav.subjects}</div>
+          </div>
+          <div className="card" style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--primary)' }}>
+              {rooms.length}
+            </div>
+            <div style={{ color: 'var(--text-secondary)' }}>{he.nav.rooms}</div>
           </div>
         </div>
 

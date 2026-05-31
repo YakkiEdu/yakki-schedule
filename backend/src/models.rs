@@ -3,9 +3,12 @@ use uuid::Uuid;
 
 /// School class (e.g., "ז'1", "ח'2")
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SchoolClass {
     pub id: String,
     pub name: String,
+    /// Default home room for this class
+    pub home_room_id: Option<String>,
     pub subjects: Vec<ClassSubject>,
 }
 
@@ -18,6 +21,8 @@ pub struct ClassSubject {
     pub split_groups: bool,
     /// Teacher IDs (1 or 2 if split into groups)
     pub teacher_ids: Vec<String>,
+    /// Override room (e.g., gym, lab) - if not set, uses class homeRoom
+    pub room_id: Option<String>,
     pub preferences: SubjectPreferences,
 }
 
@@ -69,12 +74,38 @@ impl Default for WeekGrid {
     }
 }
 
+/// Room / Classroom
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Room {
+    pub id: String,
+    pub name: String,
+    #[serde(rename = "type")]
+    pub room_type: String, // "regular", "lab", "gym", "art", "library"
+    pub capacity: Option<u32>,
+}
+
+/// Bell schedule event (prayer, lesson, break)
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BellEvent {
+    pub id: String,
+    #[serde(rename = "type")]
+    pub event_type: String, // "prayer", "lesson", "break", "longBreak"
+    pub name: String,
+    pub start_time: String, // "HH:MM"
+    pub end_time: String,   // "HH:MM"
+    pub order: u32,
+}
+
 /// Complete school configuration for schedule generation
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SchoolConfig {
     pub classes: Vec<SchoolClass>,
     pub teachers: Vec<Teacher>,
     pub subjects: Vec<Subject>,
+    pub rooms: Vec<Room>,
+    pub bell_schedule: Vec<BellEvent>,
     pub week_grid: WeekGrid,
 }
 
@@ -85,6 +116,7 @@ pub struct ScheduledLesson {
     pub class_id: String,
     pub subject_id: String,
     pub teacher_id: String,
+    pub room_id: String,
     /// 0=Sunday, 1=Monday, etc.
     pub day: u8,
     /// 1-based lesson number
@@ -123,6 +155,7 @@ impl SchoolClass {
         Self {
             id: Uuid::new_v4().to_string(),
             name: name.to_string(),
+            home_room_id: None,
             subjects: Vec::new(),
         }
     }

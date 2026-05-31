@@ -3,6 +3,8 @@ import { Sidebar } from './components/Sidebar';
 import { ClassesManager } from './components/ClassesManager';
 import { TeachersManager } from './components/TeachersManager';
 import { SubjectsManager } from './components/SubjectsManager';
+import { RoomsManager } from './components/RoomsManager';
+import { BellScheduleEditor } from './components/BellScheduleEditor';
 import { SettingsPanel } from './components/SettingsPanel';
 import { GenerateSchedule } from './components/GenerateSchedule';
 import { ScheduleView } from './components/ScheduleView';
@@ -19,6 +21,10 @@ function App() {
         return <TeachersManager />;
       case 'subjects':
         return <SubjectsManager />;
+      case 'rooms':
+        return <RoomsManager />;
+      case 'bellSchedule':
+        return <BellScheduleEditor />;
       case 'settings':
         return <SettingsPanel />;
       case 'generate':

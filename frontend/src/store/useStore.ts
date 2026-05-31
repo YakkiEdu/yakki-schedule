@@ -4,17 +4,22 @@ import type {
   SchoolClass,
   Teacher,
   Subject,
+  Room,
+  RoomType,
+  BellEvent,
   WeekGrid,
   GeneratedSchedule,
   ClassSubject,
 } from '../types';
-import { DEFAULT_WEEK_GRID } from '../types';
+import { DEFAULT_WEEK_GRID, DEFAULT_BELL_SCHEDULE } from '../types';
 
 interface AppState {
   // Data
   classes: SchoolClass[];
   teachers: Teacher[];
   subjects: Subject[];
+  rooms: Room[];
+  bellSchedule: BellEvent[];
   weekGrid: WeekGrid;
   schedule: GeneratedSchedule | null;
 
@@ -24,7 +29,7 @@ interface AppState {
   error: string | null;
 
   // Actions - Classes
-  addClass: (name: string) => void;
+  addClass: (name: string, homeRoomId?: string) => void;
   updateClass: (id: string, updates: Partial<SchoolClass>) => void;
   deleteClass: (id: string) => void;
   addClassSubject: (classId: string, subject: ClassSubject) => void;
@@ -41,6 +46,18 @@ interface AppState {
   updateSubject: (id: string, updates: Partial<Subject>) => void;
   deleteSubject: (id: string) => void;
   loadDefaultSubjects: (subjects: Subject[]) => void;
+
+  // Actions - Rooms
+  addRoom: (name: string, type: RoomType, capacity?: number) => void;
+  updateRoom: (id: string, updates: Partial<Room>) => void;
+  deleteRoom: (id: string) => void;
+
+  // Actions - Bell Schedule
+  setBellSchedule: (bellSchedule: BellEvent[]) => void;
+  addBellEvent: (event: Omit<BellEvent, 'id'>) => void;
+  updateBellEvent: (id: string, updates: Partial<BellEvent>) => void;
+  deleteBellEvent: (id: string) => void;
+  loadDefaultBellSchedule: () => void;
 
   // Actions - Settings
   updateWeekGrid: (weekGrid: WeekGrid) => void;
@@ -63,6 +80,8 @@ export const useStore = create<AppState>()(
       classes: [],
       teachers: [],
       subjects: [],
+      rooms: [],
+      bellSchedule: DEFAULT_BELL_SCHEDULE,
       weekGrid: DEFAULT_WEEK_GRID,
       schedule: null,
       activeTab: 'classes',
@@ -70,11 +89,11 @@ export const useStore = create<AppState>()(
       error: null,
 
       // Classes
-      addClass: (name) =>
+      addClass: (name, homeRoomId) =>
         set((state) => ({
           classes: [
             ...state.classes,
-            { id: generateId(), name, subjects: [] },
+            { id: generateId(), name, homeRoomId, subjects: [] },
           ],
         })),
 
@@ -177,6 +196,53 @@ export const useStore = create<AppState>()(
           ],
         })),
 
+      // Rooms
+      addRoom: (name, type, capacity) =>
+        set((state) => ({
+          rooms: [
+            ...state.rooms,
+            { id: generateId(), name, type, capacity },
+          ],
+        })),
+
+      updateRoom: (id, updates) =>
+        set((state) => ({
+          rooms: state.rooms.map((r) =>
+            r.id === id ? { ...r, ...updates } : r
+          ),
+        })),
+
+      deleteRoom: (id) =>
+        set((state) => ({
+          rooms: state.rooms.filter((r) => r.id !== id),
+        })),
+
+      // Bell Schedule
+      setBellSchedule: (bellSchedule) => set({ bellSchedule }),
+
+      addBellEvent: (event) =>
+        set((state) => ({
+          bellSchedule: [
+            ...state.bellSchedule,
+            { ...event, id: generateId() },
+          ].sort((a, b) => a.order - b.order),
+        })),
+
+      updateBellEvent: (id, updates) =>
+        set((state) => ({
+          bellSchedule: state.bellSchedule
+            .map((e) => (e.id === id ? { ...e, ...updates } : e))
+            .sort((a, b) => a.order - b.order),
+        })),
+
+      deleteBellEvent: (id) =>
+        set((state) => ({
+          bellSchedule: state.bellSchedule.filter((e) => e.id !== id),
+        })),
+
+      loadDefaultBellSchedule: () =>
+        set({ bellSchedule: DEFAULT_BELL_SCHEDULE }),
+
       // Settings
       updateWeekGrid: (weekGrid) => set({ weekGrid }),
 
@@ -194,6 +260,8 @@ export const useStore = create<AppState>()(
         classes: state.classes,
         teachers: state.teachers,
         subjects: state.subjects,
+        rooms: state.rooms,
+        bellSchedule: state.bellSchedule,
         weekGrid: state.weekGrid,
       }),
     }

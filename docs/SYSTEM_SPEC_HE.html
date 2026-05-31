@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>יאקקי מערכת שעות - מפרט מערכת</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'David', 'Arial Hebrew', 'Segoe UI', Arial, sans-serif;
+            font-size: 12pt;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fff;
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 24pt;
+            color: #2563eb;
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 14pt;
+        }
+
+        h2 {
+            font-size: 16pt;
+            color: #1e40af;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-right: 10px;
+            border-right: 4px solid #2563eb;
+        }
+
+        h3 {
+            font-size: 14pt;
+            color: #334155;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 11pt;
+        }
+
+        th, td {
+            border: 1px solid #cbd5e1;
+            padding: 8px 12px;
+            text-align: right;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .highlight {
+            background: #fef3c7;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        .new-badge {
+            background: #22c55e;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10pt;
+            margin-right: 5px;
+        }
+
+        .section-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .schedule-example {
+            background: #fff;
+            border: 2px solid #2563eb;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .schedule-example table {
+            margin: 0;
+        }
+
+        .schedule-example th {
+            background: #1e40af;
+        }
+
+        .schedule-example .time-col {
+            background: #e0e7ff;
+            font-weight: bold;
+            width: 80px;
+        }
+
+        .schedule-example .prayer {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .schedule-example .break {
+            background: #d1fae5;
+            color: #166534;
+        }
+
+        .schedule-example .long-break {
+            background: #bbf7d0;
+            color: #166534;
+            font-weight: bold;
+        }
+
+        .schedule-example .lesson {
+            background: #fff;
+        }
+
+        .schedule-example .empty {
+            background: #f1f5f9;
+            color: #94a3b8;
+        }
+
+        .cell-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .cell-subject {
+            font-weight: bold;
+            font-size: 11pt;
+        }
+
+        .cell-teacher {
+            font-size: 9pt;
+            color: #64748b;
+        }
+
+        .cell-room {
+            font-size: 9pt;
+            color: #94a3b8;
+        }
+
+        .split-cell {
+            display: flex;
+            gap: 5px;
+        }
+
+        .split-cell .group {
+            flex: 1;
+            padding: 3px;
+            border-radius: 3px;
+            font-size: 9pt;
+        }
+
+        .split-cell .group-a {
+            background: #dbeafe;
+        }
+
+        .split-cell .group-b {
+            background: #fef3c7;
+        }
+
+        ul {
+            padding-right: 25px;
+            margin: 10px 0;
+        }
+
+        li {
+            margin: 5px 0;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .toc {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .toc h3 {
+            margin-top: 0;
+        }
+
+        .toc ol {
+            padding-right: 25px;
+        }
+
+        .toc li {
+            margin: 8px 0;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            color: #64748b;
+            font-size: 10pt;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>יאקקי מערכת שעות</h1>
+        <p class="subtitle">מערכת אוטומטית ליצירת מערכת שעות בית ספרית</p>
+
+        <div class="toc">
+            <h3>תוכן עניינים</h3>
+            <ol>
+                <li>סקירה כללית</li>
+                <li>נתוני קלט
+                    <ol>
+                        <li>מקצועות</li>
+                        <li>מורים</li>
+                        <li>חדרים</li>
+                        <li>לוח זמנים (פעמון)</li>
+                        <li>כיתות</li>
+                        <li>הגדרות שבוע</li>
+                    </ol>
+                </li>
+                <li>תפוקה - תצוגות מערכת
+                    <ol>
+                        <li>מערכת לפי כיתה</li>
+                        <li>מערכת לפי מורה</li>
+                        <li>מערכת לפי חדר</li>
+                    </ol>
+                </li>
+                <li>אלגוריתם יצירת המערכת</li>
+                <li>הדפסה וייצוא</li>
+            </ol>
+        </div>
+
+        <h2>1. סקירה כללית</h2>
+        <p>מערכת יאקקי מאפשרת יצירה אוטומטית של מערכת שעות לבית הספר תוך התחשבות ב:</p>
+        <ul>
+            <li>כיתות, מורים, מקצועות וחדרים</li>
+            <li>לוח זמנים מותאם אישית עם תפילות והפסקות</li>
+            <li>אילוצים קשים (מורה לא יכול להיות בשני מקומות)</li>
+            <li>העדפות רכות (שיעורים צמודים, העדפת בוקר/צהריים)</li>
+            <li>תצוגה ב-3 פורמטים: לפי כיתה, לפי מורה, לפי חדר</li>
+        </ul>
+
+        <h2>2. נתוני קלט</h2>
+
+        <h3>2.1 מקצועות</h3>
+        <p>רשימת המקצועות הנלמדים בבית הספר.</p>
+
+        <table>
+            <tr>
+                <th>שדה</th>
+                <th>סוג</th>
+                <th>תיאור</th>
+                <th>דוגמה</th>
+            </tr>
+            <tr>
+                <td>מזהה</td>
+                <td>טקסט</td>
+                <td>מזהה ייחודי</td>
+                <td>subj-001</td>
+            </tr>
+            <tr>
+                <td>שם</td>
+                <td>טקסט</td>
+                <td>שם מלא</td>
+                <td>מתמטיקה</td>
+            </tr>
+            <tr>
+                <td>קיצור</td>
+                <td>טקסט</td>
+                <td>קיצור למערכת (3-4 תווים)</td>
+                <td>מתמ</td>
+            </tr>
+        </table>
+
+        <div class="section-box">
+            <strong>מקצועות ברירת מחדל:</strong>
+            מתמטיקה, אנגלית, עברית, תנ"ך, היסטוריה, גיאוגרפיה, מדעים, פיזיקה, כימיה, ביולוגיה, חינוך גופני, אומנות, מוזיקה, מחשבים, אזרחות, ספרות
+        </div>
+
+        <h3>2.2 מורים</h3>
+        <p>רשימת המורים בבית הספר.</p>
+
+        <table>
+            <tr>
+                <th>שדה</th>
+                <th>סוג</th>
+                <th>תיאור</th>
+                <th>דוגמה</th>
+            </tr>
+            <tr>
+                <td>מזהה</td>
+                <td>טקסט</td>
+                <td>מזהה ייחודי</td>
+                <td>teach-001</td>
+            </tr>
+            <tr>
+                <td>שם</td>
+                <td>טקסט</td>
+                <td>שם מלא</td>
+                <td>רונית כהן</td>
+            </tr>
+            <tr>
+                <td>יום חופשי</td>
+                <td>מספר (אופציונלי)</td>
+                <td>יום חופשי מועדף (0=ראשון...5=שישי)</td>
+                <td>5 (שישי)</td>
+            </tr>
+        </table>
+
+        <div class="section-box">
+            <strong>הערה חשובה:</strong> מורה יכול ללמד מקצועות שונים בכיתות שונות. לדוגמה: מורה לחינוך גופני יכול גם ללמד גיאוגרפיה.
+        </div>
+
+        <h3>2.3 חדרים <span class="new-badge">חדש</span></h3>
+        <p>רשימת החדרים והכיתות בבית הספר.</p>
+
+        <table>
+            <tr>
+                <th>שדה</th>
+                <th>סוג</th>
+                <th>תיאור</th>
+                <th>דוגמה</th>
+            </tr>
+            <tr>
+                <td>מזהה</td>
+                <td>טקסט</td>
+                <td>מזהה ייחודי</td>
+                <td>room-001</td>
+            </tr>
+            <tr>
+                <td>שם/מספר</td>
+                <td>טקסט</td>
+                <td>מספר או שם החדר</td>
+                <td>201 / מעבדת מחשבים</td>
+            </tr>
+            <tr>
+                <td>סוג</td>
+                <td>בחירה</td>
+                <td>סוג החדר</td>
+                <td>כיתה רגילה / מעבדה / אולם ספורט</td>
+            </tr>
+            <tr>
+                <td>קיבולת</td>
+                <td>מספר (אופציונלי)</td>
+                <td>מספר מקומות</td>
+                <td>30</td>
+            </tr>
+        </table>
+
+        <p><strong>סוגי חדרים:</strong></p>
+        <ul>
+            <li><strong>כיתה רגילה</strong> - חדר לימוד סטנדרטי</li>
+            <li><strong>מעבדה</strong> - מעבדת מדעים/מחשבים</li>
+            <li><strong>אולם ספורט</strong> - לחינוך גופני</li>
+            <li><strong>חדר אומנות</strong> - לאומנות ומוזיקה</li>
+            <li><strong>ספרייה</strong> - לשיעורי העשרה</li>
+        </ul>
+
+        <div class="page-break"></div>
+
+        <h3>2.4 לוח זמנים (פעמון) <span class="new-badge">חדש</span></h3>
+        <p>הגדרת סדר היום כולל תפילות, שיעורים והפסקות.</p>
+
+        <table>
+            <tr>
+                <th>שדה</th>
+                <th>סוג</th>
+                <th>תיאור</th>
+                <th>דוגמה</th>
+            </tr>
+            <tr>
+                <td>סוג אירוע</td>
+                <td>בחירה</td>
+                <td>תפילה / שיעור / הפסקה / הפסקה גדולה</td>
+                <td>תפילה</td>
+            </tr>
+            <tr>
+                <td>שם</td>
+                <td>טקסט</td>
+                <td>שם האירוע</td>
+                <td>תפילת שחרית</td>
+            </tr>
+            <tr>
+                <td>שעת התחלה</td>
+                <td>שעה</td>
+                <td>שעת התחלה</td>
+                <td>07:30</td>
+            </tr>
+            <tr>
+                <td>שעת סיום</td>
+                <td>שעה</td>
+                <td>שעת סיום</td>
+                <td>08:00</td>
+            </tr>
+        </table>
+
+        <p><strong>דוגמה ללוח זמנים יומי:</strong></p>
+
+        <table>
+            <tr>
+                <th>#</th>
+                <th>סוג</th>
+                <th>שם</th>
+                <th>התחלה</th>
+                <th>סיום</th>
+                <th>משך</th>
+            </tr>
+            <tr class="prayer">
+                <td>1</td>
+                <td>🙏 תפילה</td>
+                <td>תפילת שחרית</td>
+                <td>07:30</td>
+                <td>08:00</td>
+                <td>30 דק'</td>
+            </tr>
+            <tr class="break">
+                <td>2</td>
+                <td>☕ הפסקה</td>
+                <td>הפסקה</td>
+                <td>08:00</td>
+                <td>08:10</td>
+                <td>10 דק'</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>📖 שיעור</td>
+                <td>שיעור 1</td>
+                <td>08:10</td>
+                <td>08:55</td>
+                <td>45 דק'</td>
+            </tr>
+            <tr class="break">
+                <td>4</td>
+                <td>☕ הפסקה</td>
+                <td>הפסקה</td>
+                <td>08:55</td>
+                <td>09:05</td>
+                <td>10 דק'</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>📖 שיעור</td>
+                <td>שיעור 2</td>
+                <td>09:05</td>
+                <td>09:50</td>
+                <td>45 דק'</td>
+            </tr>
+            <tr class="break">
+                <td>6</td>
+                <td>☕ הפסקה</td>
+                <td>הפסקה</td>
+                <td>09:50</td>
+                <td>10:00</td>
+                <td>10 דק'</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>📖 שיעור</td>
+                <td>שיעור 3</td>
+                <td>10:00</td>
+                <td>10:45</td>
+                <td>45 דק'</td>
+            </tr>
+            <tr class="long-break">
+                <td>8</td>
+                <td>🍽️ הפסקה גדולה</td>
+                <td>ארוחה</td>
+                <td>10:45</td>
+                <td>11:15</td>
+                <td>30 דק'</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>📖 שיעור</td>
+                <td>שיעור 4</td>
+                <td>11:15</td>
+                <td>12:00</td>
+                <td>45 דק'</td>
+            </tr>
+            <tr class="break">
+                <td>10</td>
+                <td>☕ הפסקה</td>
+                <td>הפסקה</td>
+                <td>12:00</td>
+                <td>12:10</td>
+                <td>10 דק'</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td>📖 שיעור</td>
+                <td>שיעור 5</td>
+                <td>12:10</td>
+                <td>12:55</td>
+                <td>45 דק'</td>
+            </tr>
+            <tr class="prayer">
+                <td>12</td>
+                <td>🙏 תפילה</td>
+                <td>תפילת מנחה</td>
+                <td>12:55</td>
+                <td>13:10</td>
+                <td>15 דק'</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td>📖 שיעור</td>
+                <td>שיעור 6</td>
+                <td>13:10</td>
+                <td>13:55</td>
+                <td>45 דק'</td>
+            </tr>
+            <tr class="break">
+                <td>14</td>
+                <td>☕ הפסקה</td>
+                <td>הפסקה</td>
+                <td>13:55</td>
+                <td>14:05</td>
+                <td>10 דק'</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td>📖 שיעור</td>
+                <td>שיעור 7</td>
+                <td>14:05</td>
+                <td>14:50</td>
+                <td>45 דק'</td>
+            </tr>
+            <tr class="break">
+                <td>16</td>
+                <td>☕ הפסקה</td>
+                <td>הפסקה</td>
+                <td>14:50</td>
+                <td>15:00</td>
+                <td>10 דק'</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td>📖 שיעור</td>
+                <td>שיעור 8</td>
+                <td>15:00</td>
+                <td>15:45</td>
+                <td>45 דק'</td>
+            </tr>
+        </table>
+
+        <div class="page-break"></div>
+
+        <h3>2.5 כיתות</h3>
+        <p>רשימת הכיתות בבית הספר עם המקצועות הנלמדים בכל כיתה.</p>
+
+        <table>
+            <tr>
+                <th>שדה</th>
+                <th>סוג</th>
+                <th>תיאור</th>
+                <th>דוגמה</th>
+            </tr>
+            <tr>
+                <td>שם</td>
+                <td>טקסט</td>
+                <td>שם הכיתה</td>
+                <td>ז'1</td>
+            </tr>
+            <tr>
+                <td>חדר בית</td>
+                <td>בחירה</td>
+                <td>חדר קבוע של הכיתה</td>
+                <td>201</td>
+            </tr>
+            <tr>
+                <td>מקצועות</td>
+                <td>רשימה</td>
+                <td>מקצועות הנלמדים בכיתה</td>
+                <td>ראה להלן</td>
+            </tr>
+        </table>
+
+        <p><strong>הגדרת מקצוע בכיתה:</strong></p>
+
+        <table>
+            <tr>
+                <th>שדה</th>
+                <th>סוג</th>
+                <th>תיאור</th>
+                <th>דוגמה</th>
+            </tr>
+            <tr>
+                <td>מקצוע</td>
+                <td>בחירה</td>
+                <td>המקצוע הנלמד</td>
+                <td>מתמטיקה</td>
+            </tr>
+            <tr>
+                <td>שעות שבועיות</td>
+                <td>מספר</td>
+                <td>מספר שעות בשבוע</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td>חלוקה לקבוצות</td>
+                <td>כן/לא</td>
+                <td>האם לחלק את הכיתה ל-2 קבוצות</td>
+                <td>כן (לאנגלית)</td>
+            </tr>
+            <tr>
+                <td>מורה / מורים</td>
+                <td>בחירה</td>
+                <td>מורה אחד או שניים (אם מחולק)</td>
+                <td>רונית כהן / דוד לוי</td>
+            </tr>
+            <tr>
+                <td>חדר</td>
+                <td>בחירה (אופציונלי)</td>
+                <td>חדר ספציפי (אם שונה מחדר הבית)</td>
+                <td>אולם ספורט</td>
+            </tr>
+        </table>
+
+        <p><strong>העדפות למקצוע:</strong></p>
+        <ul>
+            <li><strong>שיעורים צמודים</strong> - לשיבוץ שני שיעורים רצופים (מומלץ לחנ"ג, אומנות)</li>
+            <li><strong>העדפת בוקר</strong> - לשיבוץ בשיעורים 1-3 (מומלץ למתמטיקה, מדעים)</li>
+            <li><strong>העדפת צהריים</strong> - לשיבוץ בשיעורים 4+ (מומלץ לחנ"ג, מוזיקה)</li>
+        </ul>
+
+        <h3>2.6 הגדרות שבוע</h3>
+        <p>הגדרת מספר השיעורים המקסימלי בכל יום.</p>
+
+        <table>
+            <tr>
+                <th>יום</th>
+                <th>ראשון</th>
+                <th>שני</th>
+                <th>שלישי</th>
+                <th>רביעי</th>
+                <th>חמישי</th>
+                <th>שישי</th>
+            </tr>
+            <tr>
+                <td><strong>מקסימום שיעורים</strong></td>
+                <td>8</td>
+                <td>8</td>
+                <td>8</td>
+                <td>8</td>
+                <td>8</td>
+                <td>0</td>
+            </tr>
+        </table>
+
+        <div class="page-break"></div>
+
+        <h2>3. תפוקה - תצוגות מערכת</h2>
+
+        <h3>3.1 מערכת שעות לפי כיתה</h3>
+        <p>תצוגה של מערכת השעות השבועית של כיתה מסוימת.</p>
+
+        <div class="schedule-example">
+            <h4 style="margin: 0 0 10px 0; text-align: center;">מערכת שעות - כיתה ז'1</h4>
+            <table>
+                <tr>
+                    <th style="width: 100px;">זמן</th>
+                    <th>ראשון</th>
+                    <th>שני</th>
+                    <th>שלישי</th>
+                    <th>רביעי</th>
+                    <th>חמישי</th>
+                </tr>
+                <tr>
+                    <td class="time-col prayer">תפילה<br>07:30-08:00</td>
+                    <td class="prayer" colspan="5" style="text-align: center;">תפילת שחרית</td>
+                </tr>
+                <tr>
+                    <td class="time-col">שיעור 1<br>08:10-08:55</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ר. כהן</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="split-cell">
+                            <div class="group group-a">אנג<br>ד. לוי<br>201</div>
+                            <div class="group group-b">אנג<br>מ. רוזן<br>מחש</div>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">עבר</span>
+                            <span class="cell-teacher">ש. גולן</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ר. כהן</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">היס</span>
+                            <span class="cell-teacher">מ. אלון</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time-col">שיעור 2<br>09:05-09:50</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ר. כהן</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="split-cell">
+                            <div class="group group-a">אנג<br>ד. לוי<br>201</div>
+                            <div class="group group-b">אנג<br>מ. רוזן<br>מחש</div>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">תנך</span>
+                            <span class="cell-teacher">א. ברק</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מדע</span>
+                            <span class="cell-teacher">י. רוזן</span>
+                            <span class="cell-room">מעבדה</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">גאו</span>
+                            <span class="cell-teacher">מ. אלון</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time-col">שיעור 3<br>10:00-10:45</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">חנג</span>
+                            <span class="cell-teacher">נ. דגן</span>
+                            <span class="cell-room">ספורט</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ר. כהן</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מחש</span>
+                            <span class="cell-teacher">ד. לוי</span>
+                            <span class="cell-room">מחש</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">עבר</span>
+                            <span class="cell-teacher">ש. גולן</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">תנך</span>
+                            <span class="cell-teacher">א. ברק</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time-col long-break">הפסקה גדולה<br>10:45-11:15</td>
+                    <td class="long-break" colspan="5" style="text-align: center;">ארוחה (30 דקות)</td>
+                </tr>
+                <tr>
+                    <td class="time-col">שיעור 4<br>11:15-12:00</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">חנג</span>
+                            <span class="cell-teacher">נ. דגן</span>
+                            <span class="cell-room">ספורט</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">היס</span>
+                            <span class="cell-teacher">מ. אלון</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">ספר</span>
+                            <span class="cell-teacher">ש. גולן</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">אמנ</span>
+                            <span class="cell-teacher">ת. שלום</span>
+                            <span class="cell-room">אומנות</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ר. כהן</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time-col">שיעור 5<br>12:10-12:55</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">ספר</span>
+                            <span class="cell-teacher">ש. גולן</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">תנך</span>
+                            <span class="cell-teacher">א. ברק</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">גאו</span>
+                            <span class="cell-teacher">מ. אלון</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">אמנ</span>
+                            <span class="cell-teacher">ת. שלום</span>
+                            <span class="cell-room">אומנות</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מדע</span>
+                            <span class="cell-teacher">י. רוזן</span>
+                            <span class="cell-room">מעבדה</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time-col prayer">מנחה<br>12:55-13:10</td>
+                    <td class="prayer" colspan="5" style="text-align: center;">תפילת מנחה</td>
+                </tr>
+                <tr>
+                    <td class="time-col">שיעור 6<br>13:10-13:55</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מוז</span>
+                            <span class="cell-teacher">ע. מזרחי</span>
+                            <span class="cell-room">מוזיקה</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מדע</span>
+                            <span class="cell-teacher">י. רוזן</span>
+                            <span class="cell-room">מעבדה</span>
+                        </div>
+                    </td>
+                    <td class="empty">-</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מחש</span>
+                            <span class="cell-teacher">ד. לוי</span>
+                            <span class="cell-room">מחש</span>
+                        </div>
+                    </td>
+                    <td class="empty">-</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="page-break"></div>
+
+        <h3>3.2 מערכת שעות לפי מורה</h3>
+        <p>תצוגה של מערכת השעות השבועית של מורה מסוים.</p>
+
+        <div class="schedule-example">
+            <h4 style="margin: 0 0 10px 0; text-align: center;">מערכת שעות - רונית כהן (מתמטיקה)</h4>
+            <table>
+                <tr>
+                    <th style="width: 100px;">זמן</th>
+                    <th>ראשון</th>
+                    <th>שני</th>
+                    <th>שלישי</th>
+                    <th>רביעי</th>
+                    <th>חמישי</th>
+                </tr>
+                <tr>
+                    <td class="time-col">שיעור 1<br>08:10-08:55</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ז'1</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                    <td class="empty">-</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ז'2</span>
+                            <span class="cell-room">202</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ז'1</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ח'1</span>
+                            <span class="cell-room">301</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time-col">שיעור 2<br>09:05-09:50</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ז'1</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ז'1</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ז'2</span>
+                            <span class="cell-room">202</span>
+                        </div>
+                    </td>
+                    <td class="empty" style="background: #fee2e2; color: #991b1b;">חלון</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ח'1</span>
+                            <span class="cell-room">301</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time-col">שיעור 3<br>10:00-10:45</td>
+                    <td class="empty">-</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ז'1</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ח'2</span>
+                            <span class="cell-room">302</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ז'2</span>
+                            <span class="cell-room">202</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ח'2</span>
+                            <span class="cell-room">302</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time-col long-break">הפסקה גדולה</td>
+                    <td class="long-break" colspan="5" style="text-align: center;">10:45 - 11:15</td>
+                </tr>
+                <tr>
+                    <td class="time-col">שיעור 4<br>11:15-12:00</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ח'1</span>
+                            <span class="cell-room">301</span>
+                        </div>
+                    </td>
+                    <td class="empty">-</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ח'2</span>
+                            <span class="cell-room">302</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ז'2</span>
+                            <span class="cell-room">202</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מתמ</span>
+                            <span class="cell-teacher">ז'1</span>
+                            <span class="cell-room">201</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr style="background: #e0e7ff; font-weight: bold;">
+                    <td>סה"כ יומי</td>
+                    <td>4 שעות</td>
+                    <td>3 שעות</td>
+                    <td>5 שעות</td>
+                    <td>4 שעות</td>
+                    <td>5 שעות</td>
+                </tr>
+            </table>
+            <p style="text-align: center; margin-top: 10px;"><strong>סה"כ שעות שבועיות: 21 | חלונות: 1</strong></p>
+        </div>
+
+        <div class="page-break"></div>
+
+        <h3>3.3 מערכת שעות לפי חדר <span class="new-badge">חדש</span></h3>
+        <p>תצוגה של תפוסת חדר מסוים לאורך השבוע.</p>
+
+        <div class="schedule-example">
+            <h4 style="margin: 0 0 10px 0; text-align: center;">מערכת שעות - מעבדת מחשבים (קיבולת: 25)</h4>
+            <table>
+                <tr>
+                    <th style="width: 100px;">זמן</th>
+                    <th>ראשון</th>
+                    <th>שני</th>
+                    <th>שלישי</th>
+                    <th>רביעי</th>
+                    <th>חמישי</th>
+                </tr>
+                <tr>
+                    <td class="time-col">שיעור 1<br>08:10-08:55</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מחש</span>
+                            <span class="cell-teacher">ז'1</span>
+                            <span class="cell-room">ד. לוי</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">אנג קב'ב</span>
+                            <span class="cell-teacher">ז'1</span>
+                            <span class="cell-room">מ. רוזן</span>
+                        </div>
+                    </td>
+                    <td class="empty" style="color: #22c55e;">פנוי</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מחש</span>
+                            <span class="cell-teacher">ח'1</span>
+                            <span class="cell-room">ש. גולן</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מחש</span>
+                            <span class="cell-teacher">ח'2</span>
+                            <span class="cell-room">ש. גולן</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time-col">שיעור 2<br>09:05-09:50</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">אנג קב'ב</span>
+                            <span class="cell-teacher">ז'2</span>
+                            <span class="cell-room">מ. רוזן</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">אנג קב'ב</span>
+                            <span class="cell-teacher">ז'1</span>
+                            <span class="cell-room">מ. רוזן</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מחש</span>
+                            <span class="cell-teacher">ז'2</span>
+                            <span class="cell-room">ד. לוי</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מחש</span>
+                            <span class="cell-teacher">ח'1</span>
+                            <span class="cell-room">ש. גולן</span>
+                        </div>
+                    </td>
+                    <td class="empty" style="color: #22c55e;">פנוי</td>
+                </tr>
+                <tr>
+                    <td class="time-col">שיעור 3<br>10:00-10:45</td>
+                    <td class="empty" style="color: #22c55e;">פנוי</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מחש</span>
+                            <span class="cell-teacher">ז'2</span>
+                            <span class="cell-room">ד. לוי</span>
+                        </div>
+                    </td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">מחש</span>
+                            <span class="cell-teacher">ז'1</span>
+                            <span class="cell-room">ד. לוי</span>
+                        </div>
+                    </td>
+                    <td class="empty" style="color: #22c55e;">פנוי</td>
+                    <td class="lesson">
+                        <div class="cell-content">
+                            <span class="cell-subject">אנג קב'ב</span>
+                            <span class="cell-teacher">ח'1</span>
+                            <span class="cell-room">מ. רוזן</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr style="background: #e0e7ff; font-weight: bold;">
+                    <td>תפוסה יומית</td>
+                    <td>67%<br>(2/3)</td>
+                    <td>100%<br>(3/3)</td>
+                    <td>67%<br>(2/3)</td>
+                    <td>67%<br>(2/3)</td>
+                    <td>67%<br>(2/3)</td>
+                </tr>
+            </table>
+            <p style="text-align: center; margin-top: 10px;"><strong>תפוסה שבועית ממוצעת: 73%</strong></p>
+        </div>
+
+        <div class="page-break"></div>
+
+        <h2>4. אלגוריתם יצירת המערכת</h2>
+
+        <h3>4.1 אילוצים קשים (חובה)</h3>
+        <p>הפרה של אילוצים אלה הופכת את המערכת ללא תקינה:</p>
+
+        <table>
+            <tr>
+                <th>אילוץ</th>
+                <th>תיאור</th>
+            </tr>
+            <tr>
+                <td>מורה תפוס</td>
+                <td>מורה לא יכול להיות בשני מקומות באותו זמן</td>
+            </tr>
+            <tr>
+                <td>כיתה תפוסה</td>
+                <td>כיתה/קבוצה לא יכולה להיות בשני מקומות</td>
+            </tr>
+            <tr>
+                <td>חדר תפוס</td>
+                <td>חדר לא יכול לשמש שני שיעורים בו-זמנית</td>
+            </tr>
+            <tr>
+                <td>שעות לפי תכנית</td>
+                <td>כל השעות של כל מקצוע חייבות להיות משובצות</td>
+            </tr>
+            <tr>
+                <td>יום חופשי</td>
+                <td>אין שיבוץ ביום החופשי של המורה</td>
+            </tr>
+        </table>
+
+        <h3>4.2 אילוצים רכים (העדפות)</h3>
+        <p>הפרה של אילוצים אלה מורידה את ציון המערכת:</p>
+
+        <table>
+            <tr>
+                <th>אילוץ</th>
+                <th>קנס</th>
+            </tr>
+            <tr>
+                <td>חלון למורה</td>
+                <td>-5 נקודות לכל חלון</td>
+            </tr>
+            <tr>
+                <td>חלון לכיתה</td>
+                <td>-10 נקודות לכל חלון</td>
+            </tr>
+            <tr>
+                <td>שיעורים לא צמודים</td>
+                <td>-3 נקודות כשנדרש צמוד</td>
+            </tr>
+            <tr>
+                <td>הפרת העדפת בוקר/צהריים</td>
+                <td>-2 נקודות</td>
+            </tr>
+            <tr>
+                <td>אי-איזון בימים</td>
+                <td>-1 נקודה לכל חוסר איזון</td>
+            </tr>
+        </table>
+
+        <h2>5. הדפסה וייצוא</h2>
+
+        <h3>פורמטים זמינים:</h3>
+        <ul>
+            <li><strong>HTML להדפסה</strong> - Ctrl+P מהדפדפן</li>
+            <li><strong>PDF</strong> - קובץ להורדה ושיתוף</li>
+            <li><strong>Excel</strong> - לעריכה נוספת</li>
+        </ul>
+
+        <h3>אפשרויות הדפסה:</h3>
+        <ul>
+            <li>כיוון: לרוחב / לאורך</li>
+            <li>גודל גופן: קטן / בינוני / גדול</li>
+            <li>הצגה/הסתרה: זמנים, חדרים, מורים</li>
+            <li>צבעוני / שחור-לבן</li>
+        </ul>
+
+        <div class="footer">
+            <p>יאקקי מערכת שעות | גרסה 1.0</p>
+            <p>© 2026 YakkiEdu</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -4,8 +4,8 @@ import { useStore } from '../store/useStore';
 import { DAY_NAMES_HE } from '../types';
 
 export function ScheduleView() {
-  const { schedule, classes, subjects, teachers, weekGrid } = useStore();
-  const [viewMode, setViewMode] = useState<'class' | 'teacher'>('class');
+  const { schedule, classes, subjects, teachers, rooms, bellSchedule, weekGrid } = useStore();
+  const [viewMode, setViewMode] = useState<'class' | 'teacher' | 'room'>('class');
   const [selectedId, setSelectedId] = useState<string>('');
 
   if (!schedule) {
@@ -22,14 +22,23 @@ export function ScheduleView() {
   const maxLessons = Math.max(...weekGrid.maxLessons);
   const activeDays = weekGrid.maxLessons.map((m, i) => m > 0 ? i : -1).filter(i => i >= 0);
 
-  // Get lessons for selected class or teacher
+  // Get bell event for a lesson number (only lessons, not prayers/breaks)
+  const getLessonBellEvent = (lessonNum: number) => {
+    const lessonEvents = bellSchedule.filter(e => e.type === 'lesson');
+    return lessonEvents[lessonNum - 1] || null;
+  };
+
+  // Get lessons for selected class, teacher, or room
   const getFilteredLessons = () => {
     if (!selectedId) return [];
 
     if (viewMode === 'class') {
       return schedule.lessons.filter((l) => l.classId === selectedId);
-    } else {
+    } else if (viewMode === 'teacher') {
       return schedule.lessons.filter((l) => l.teacherId === selectedId);
+    } else {
+      // Room view - filter by roomId
+      return schedule.lessons.filter((l) => l.roomId === selectedId);
     }
   };
 
@@ -78,6 +87,12 @@ export function ScheduleView() {
         <div style={{ fontWeight: 'bold' }}>{subject?.shortName}</div>
         {viewMode === 'class' && <div style={{ fontSize: '0.75rem' }}>{teacher?.name}</div>}
         {viewMode === 'teacher' && <div style={{ fontSize: '0.75rem' }}>{cls?.name}</div>}
+        {viewMode === 'room' && (
+          <>
+            <div style={{ fontSize: '0.75rem' }}>{cls?.name}</div>
+            <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>{teacher?.name}</div>
+          </>
+        )}
       </div>
     );
   };
@@ -104,6 +119,12 @@ export function ScheduleView() {
             >
               {he.schedule.viewByTeacher}
             </button>
+            <button
+              className={`btn ${viewMode === 'room' ? 'btn-primary' : 'btn-secondary'} btn-sm`}
+              onClick={() => { setViewMode('room'); setSelectedId(''); }}
+            >
+              {he.schedule.viewByRoom}
+            </button>
             <button className="btn btn-success btn-sm" onClick={handlePrint}>
               {he.schedule.print}
             </button>
@@ -117,17 +138,21 @@ export function ScheduleView() {
             onChange={(e) => setSelectedId(e.target.value)}
           >
             <option value="">{he.common.select}...</option>
-            {viewMode === 'class'
-              ? classes.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))
-              : teachers.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name}
-                  </option>
-                ))}
+            {viewMode === 'class' && classes.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+            {viewMode === 'teacher' && teachers.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
+            ))}
+            {viewMode === 'room' && rooms.map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.name}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -153,9 +178,9 @@ export function ScheduleView() {
       {selectedId && (
         <div className="card" style={{ overflow: 'auto' }}>
           <h3 style={{ marginBottom: '1rem' }}>
-            {viewMode === 'class'
-              ? classes.find(c => c.id === selectedId)?.name
-              : teachers.find(t => t.id === selectedId)?.name}
+            {viewMode === 'class' && classes.find(c => c.id === selectedId)?.name}
+            {viewMode === 'teacher' && teachers.find(t => t.id === selectedId)?.name}
+            {viewMode === 'room' && rooms.find(r => r.id === selectedId)?.name}
           </h3>
           <table className="schedule-table">
             <thead>
@@ -167,18 +192,26 @@ export function ScheduleView() {
               </tr>
             </thead>
             <tbody>
-              {Array.from({ length: maxLessons }, (_, i) => i + 1).map((lessonNum) => (
-                <tr key={lessonNum}>
-                  <td style={{ fontWeight: 'bold', background: 'var(--bg-secondary)' }}>
-                    {lessonNum}
-                  </td>
-                  {activeDays.map((day) => (
-                    <td key={day}>
-                      {lessonNum <= weekGrid.maxLessons[day] ? getCell(day, lessonNum) : null}
+              {Array.from({ length: maxLessons }, (_, i) => i + 1).map((lessonNum) => {
+                const bellEvent = getLessonBellEvent(lessonNum);
+                return (
+                  <tr key={lessonNum}>
+                    <td style={{ fontWeight: 'bold', background: 'var(--bg-secondary)', textAlign: 'center' }}>
+                      <div>{lessonNum}</div>
+                      {bellEvent && (
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
+                          {bellEvent.startTime}-{bellEvent.endTime}
+                        </div>
+                      )}
                     </td>
-                  ))}
-                </tr>
-              ))}
+                    {activeDays.map((day) => (
+                      <td key={day}>
+                        {lessonNum <= weekGrid.maxLessons[day] ? getCell(day, lessonNum) : null}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

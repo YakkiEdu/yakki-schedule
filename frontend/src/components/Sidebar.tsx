@@ -5,6 +5,8 @@ const navItems = [
   { id: 'classes', label: he.nav.classes, icon: '🏫' },
   { id: 'teachers', label: he.nav.teachers, icon: '👨‍🏫' },
   { id: 'subjects', label: he.nav.subjects, icon: '📚' },
+  { id: 'rooms', label: he.nav.rooms, icon: '🚪' },
+  { id: 'bellSchedule', label: he.nav.bellSchedule, icon: '⏰' },
   { id: 'settings', label: he.nav.settings, icon: '⚙️' },
   { id: 'generate', label: he.nav.generate, icon: '🎯' },
   { id: 'schedule', label: he.nav.schedule, icon: '📅' },

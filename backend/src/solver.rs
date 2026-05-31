@@ -27,6 +27,8 @@ impl ScheduleSolver {
         let mut teacher_schedule: HashMap<(String, u8, u8), bool> = HashMap::new();
         // Track class assignments: (class_id, day, lesson, group) -> is_occupied
         let mut class_schedule: HashMap<(String, u8, u8, u8), bool> = HashMap::new();
+        // Track room assignments: (room_id, day, lesson) -> is_occupied
+        let mut room_schedule: HashMap<(String, u8, u8), bool> = HashMap::new();
 
         // Process each class
         for class in &self.config.classes {
@@ -55,6 +57,11 @@ impl ScheduleSolver {
                     hours
                 };
 
+                // Determine room for this subject: use override or class homeRoom
+                let room_id = class_subject.room_id.clone()
+                    .or_else(|| class.home_room_id.clone())
+                    .unwrap_or_default();
+
                 for (group_idx, &group) in groups.iter().enumerate() {
                     let teacher_id = teacher_ids.get(group_idx).or(teacher_ids.first());
                     let teacher_id = match teacher_id {
@@ -74,6 +81,7 @@ impl ScheduleSolver {
                         if let Some((day, lesson)) = self.find_slot(
                             &class.id,
                             &teacher_id,
+                            &room_id,
                             group,
                             teacher_day_off,
                             prefer_morning,
@@ -81,12 +89,14 @@ impl ScheduleSolver {
                             paired && remaining_hours >= 2,
                             &teacher_schedule,
                             &class_schedule,
+                            &room_schedule,
                         ) {
                             // Schedule the lesson
                             lessons.push(ScheduledLesson {
                                 class_id: class.id.clone(),
                                 subject_id: class_subject.subject_id.clone(),
                                 teacher_id: teacher_id.clone(),
+                                room_id: room_id.clone(),
                                 day,
                                 lesson_number: lesson,
                                 group,
@@ -94,6 +104,9 @@ impl ScheduleSolver {
 
                             teacher_schedule.insert((teacher_id.clone(), day, lesson), true);
                             class_schedule.insert((class.id.clone(), day, lesson, group), true);
+                            if !room_id.is_empty() {
+                                room_schedule.insert((room_id.clone(), day, lesson), true);
+                            }
                             if group == 0 {
                                 // Whole class also blocks both groups
                                 class_schedule.insert((class.id.clone(), day, lesson, 1), true);
@@ -108,17 +121,20 @@ impl ScheduleSolver {
                                 if self.is_slot_available(
                                     &class.id,
                                     &teacher_id,
+                                    &room_id,
                                     group,
                                     day,
                                     next_lesson,
                                     &teacher_schedule,
                                     &class_schedule,
+                                    &room_schedule,
                                 ) && next_lesson <= self.config.week_grid.max_lessons[day as usize]
                                 {
                                     lessons.push(ScheduledLesson {
                                         class_id: class.id.clone(),
                                         subject_id: class_subject.subject_id.clone(),
                                         teacher_id: teacher_id.clone(),
+                                        room_id: room_id.clone(),
                                         day,
                                         lesson_number: next_lesson,
                                         group,
@@ -126,6 +142,9 @@ impl ScheduleSolver {
 
                                     teacher_schedule.insert((teacher_id.clone(), day, next_lesson), true);
                                     class_schedule.insert((class.id.clone(), day, next_lesson, group), true);
+                                    if !room_id.is_empty() {
+                                        room_schedule.insert((room_id.clone(), day, next_lesson), true);
+                                    }
                                     if group == 0 {
                                         class_schedule.insert((class.id.clone(), day, next_lesson, 1), true);
                                         class_schedule.insert((class.id.clone(), day, next_lesson, 2), true);
@@ -171,6 +190,7 @@ impl ScheduleSolver {
         &self,
         class_id: &str,
         teacher_id: &str,
+        room_id: &str,
         group: u8,
         teacher_day_off: Option<u8>,
         prefer_morning: bool,
@@ -178,6 +198,7 @@ impl ScheduleSolver {
         need_consecutive: bool,
         teacher_schedule: &HashMap<(String, u8, u8), bool>,
         class_schedule: &HashMap<(String, u8, u8, u8), bool>,
+        room_schedule: &HashMap<(String, u8, u8), bool>,
     ) -> Option<(u8, u8)> {
         let mut rng = rand::thread_rng();
         let mut candidates: Vec<(u8, u8)> = Vec::new();
@@ -197,11 +218,13 @@ impl ScheduleSolver {
                 if self.is_slot_available(
                     class_id,
                     teacher_id,
+                    room_id,
                     group,
                     day,
                     lesson,
                     teacher_schedule,
                     class_schedule,
+                    room_schedule,
                 ) {
                     // Check consecutive availability if needed
                     if need_consecutive {
@@ -209,11 +232,13 @@ impl ScheduleSolver {
                             && self.is_slot_available(
                                 class_id,
                                 teacher_id,
+                                room_id,
                                 group,
                                 day,
                                 lesson + 1,
                                 teacher_schedule,
                                 class_schedule,
+                                room_schedule,
                             )
                         {
                             candidates.push((day, lesson));
@@ -245,14 +270,21 @@ impl ScheduleSolver {
         &self,
         class_id: &str,
         teacher_id: &str,
+        room_id: &str,
         group: u8,
         day: u8,
         lesson: u8,
         teacher_schedule: &HashMap<(String, u8, u8), bool>,
         class_schedule: &HashMap<(String, u8, u8, u8), bool>,
+        room_schedule: &HashMap<(String, u8, u8), bool>,
     ) -> bool {
         // Check teacher availability
         if teacher_schedule.contains_key(&(teacher_id.to_string(), day, lesson)) {
+            return false;
+        }
+
+        // Check room availability (only if room is specified)
+        if !room_id.is_empty() && room_schedule.contains_key(&(room_id.to_string(), day, lesson)) {
             return false;
         }
 
@@ -322,11 +354,13 @@ mod tests {
             classes: vec![SchoolClass {
                 id: "c1".to_string(),
                 name: "ז'1".to_string(),
+                home_room_id: Some("r1".to_string()),
                 subjects: vec![ClassSubject {
                     subject_id: "math".to_string(),
                     hours_per_week: 5,
                     split_groups: false,
                     teacher_ids: vec!["t1".to_string()],
+                    room_id: None,
                     preferences: SubjectPreferences::default(),
                 }],
             }],
@@ -340,6 +374,13 @@ mod tests {
                 name: "מתמטיקה".to_string(),
                 short_name: "מתמ".to_string(),
             }],
+            rooms: vec![Room {
+                id: "r1".to_string(),
+                name: "201".to_string(),
+                room_type: "regular".to_string(),
+                capacity: Some(30),
+            }],
+            bell_schedule: vec![],
             week_grid: WeekGrid::default(),
         };
 
