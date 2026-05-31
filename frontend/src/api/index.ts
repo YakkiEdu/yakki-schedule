@@ -1,6 +1,8 @@
 import type { SchoolConfig, GeneratedSchedule } from '../types';
 
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+export const API_URL = import.meta.env.VITE_API_URL || (
+  import.meta.env.PROD ? '/schedule-api' : 'http://localhost:3001'
+);
 
 export async function generateSchedule(config: SchoolConfig): Promise<GeneratedSchedule> {
   const response = await fetch(`${API_URL}/api/schedule/generate`, {

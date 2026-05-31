@@ -1,0 +1,28 @@
+{
+  "name": "yakki-schedule",
+  "version": "1.0.0",
+  "description": "Automatic school timetable generator with Hebrew UI.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YakkiEdu/yakki-schedule.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/YakkiEdu/yakki-schedule/issues"
+  },
+  "homepage": "https://github.com/YakkiEdu/yakki-schedule#readme",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "nodemailer": "^8.0.10"
+  }
+}
